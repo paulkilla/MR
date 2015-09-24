@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#01458C</color>
+    <color name="colorPrimaryDark">#000236</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">#16589C</color>
+    <color name="listBackground">#ffdedede</color>
+    <color name="cardBackground">#ffcbcbcb</color>
+    <color name="cardTitle">#ff000000</color>
+    <color name="cardSnippet">#ff5f5f5f</color>
+    <color name="menuBackground">#000236</color>
+    <color name="menuText">#FFFFFF</color>
+</resources>
