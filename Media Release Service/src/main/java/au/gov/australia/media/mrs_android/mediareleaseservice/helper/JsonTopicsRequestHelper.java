@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
 import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
+import au.gov.australia.media.mrs_android.mediareleaseservice.fragments.HomeFragment;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -24,18 +25,17 @@ import java.util.Date;
 /**
  * Created by paulk on 21/09/15.
  */
-public class JsonRequestHelper extends AsyncTask<String, Void, String> {
+public class JsonTopicsRequestHelper extends AsyncTask<String, Void, String> {
 
     Context context;
 
-    public JsonRequestHelper(Context context) {
+    public JsonTopicsRequestHelper(Context context) {
         this.context = context;
     }
 
     @Override
     protected void onPreExecute() {
-        Toast toast = Toast.makeText(context, "Updating Media Releases", Toast.LENGTH_SHORT);
-        toast.show();
+
     }
 
     @Override
@@ -45,8 +45,6 @@ public class JsonRequestHelper extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String json) {
-        Toast toast = Toast.makeText(context, "Finished updating Media Releases", Toast.LENGTH_SHORT);
-        toast.show();
     }
 
 

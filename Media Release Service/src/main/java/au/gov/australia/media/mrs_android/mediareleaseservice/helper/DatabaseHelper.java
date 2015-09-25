@@ -16,10 +16,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MR";
     public static final String MR_TABLE_NAME = "mediaReleases";
+    public static final String TOPICS_TABLE_NAME = "topics";
     public static final String ID_COLUMN = "id";
     public static final String OBJECT_COLUMN = "object";
     private static final String MR_TABLE_CREATE =
             "CREATE TABLE " + MR_TABLE_NAME + " (" +
+                    ID_COLUMN + " INT PRIMARY KEY NOT NULL, " +
+                    OBJECT_COLUMN + " BLOB NOT NULL);";
+
+    private static final String TOPICS_TABLE_CREATE =
+            "CREATE TABLE " + TOPICS_TABLE_NAME + " (" +
                     ID_COLUMN + " INT PRIMARY KEY NOT NULL, " +
                     OBJECT_COLUMN + " BLOB NOT NULL);";
 
@@ -30,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(MR_TABLE_CREATE);
+        db.execSQL(TOPICS_TABLE_CREATE);
     }
 
     @Override

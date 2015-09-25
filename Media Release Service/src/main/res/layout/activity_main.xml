@@ -16,21 +16,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
 
-                    android:id="@+id/drawer_layout" android:background="@color/listBackground"
+                                            android:id="@+id/drawer_layout"
+                                            android:background="@color/listBackground"
                     tools:context=".MyActivity">
 
+        <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/listBackground"
+                />
+
+
         <ListView
-                android:id="@+id/navList"
+                android:id="@+id/left_drawer"
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="left|start"
                 android:background="@color/menuBackground" />
 
-        <android.support.v7.widget.RecyclerView
-                android:id="@+id/cardList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/listBackground"
-                />
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>
