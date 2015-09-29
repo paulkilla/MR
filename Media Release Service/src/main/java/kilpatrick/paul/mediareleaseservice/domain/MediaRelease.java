@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.domain;
+package kilpatrick.paul.mediareleaseservice.domain;
 
 import android.content.Context;
 import org.json.JSONException;

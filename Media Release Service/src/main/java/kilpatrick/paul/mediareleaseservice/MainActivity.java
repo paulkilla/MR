@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice;
+package kilpatrick.paul.mediareleaseservice;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import au.gov.australia.media.mrs_android.mediareleaseservice.fragments.HomeFragment;
+import kilpatrick.paul.mediareleaseservice.fragments.HomeFragment;
 
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.domain;
+package kilpatrick.paul.mediareleaseservice.domain;
 
 /**
  * Created by paulk on 25/09/15.

@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice;
+package kilpatrick.paul.mediareleaseservice;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.adapter;
+package kilpatrick.paul.mediareleaseservice.adapter;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import au.gov.australia.media.mrs_android.mediareleaseservice.R;
-import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
-import au.gov.australia.media.mrs_android.mediareleaseservice.helper.DatabaseHelper;
+import kilpatrick.paul.mediareleaseservice.R;
+import kilpatrick.paul.mediareleaseservice.domain.MediaRelease;
+import kilpatrick.paul.mediareleaseservice.helper.DatabaseHelper;
 import java.util.List;
 
 /**

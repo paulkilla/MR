@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.listener;
+package kilpatrick.paul.mediareleaseservice.listener;
 
 import android.content.Context;
 import android.view.GestureDetector;

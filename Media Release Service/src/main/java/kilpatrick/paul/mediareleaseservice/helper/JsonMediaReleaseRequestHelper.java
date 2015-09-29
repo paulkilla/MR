@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.helper;
+package kilpatrick.paul.mediareleaseservice.helper;
 
 import android.app.Fragment;
 import android.content.ContentValues;
@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
-import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
-import au.gov.australia.media.mrs_android.mediareleaseservice.fragments.HomeFragment;
+import kilpatrick.paul.mediareleaseservice.domain.MediaRelease;
+import kilpatrick.paul.mediareleaseservice.fragments.HomeFragment;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

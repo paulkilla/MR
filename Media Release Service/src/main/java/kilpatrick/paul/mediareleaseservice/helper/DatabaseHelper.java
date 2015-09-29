@@ -1,9 +1,9 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.helper;
+package kilpatrick.paul.mediareleaseservice.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
+import kilpatrick.paul.mediareleaseservice.domain.MediaRelease;
 
 import java.io.*;
 

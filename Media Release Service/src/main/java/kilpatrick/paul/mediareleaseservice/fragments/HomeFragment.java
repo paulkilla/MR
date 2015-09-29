@@ -1,4 +1,4 @@
-package au.gov.australia.media.mrs_android.mediareleaseservice.fragments;
+package kilpatrick.paul.mediareleaseservice.fragments;
 
 import android.app.Fragment;
 import android.content.ContentValues;
@@ -13,46 +13,55 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import au.gov.australia.media.mrs_android.mediareleaseservice.R;
-import au.gov.australia.media.mrs_android.mediareleaseservice.adapter.MediaReleaseAdapter;
-import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
-import au.gov.australia.media.mrs_android.mediareleaseservice.helper.DatabaseHelper;
+import kilpatrick.paul.mediareleaseservice.Constants;
+import kilpatrick.paul.mediareleaseservice.R;
+import kilpatrick.paul.mediareleaseservice.adapter.MediaReleaseAdapter;
+import kilpatrick.paul.mediareleaseservice.domain.MediaRelease;
+import kilpatrick.paul.mediareleaseservice.helper.DatabaseHelper;
+import kilpatrick.paul.mediareleaseservice.helper.JsonMediaReleaseRequestHelper;
 
 import java.util.ArrayList;
 
 /**
  * Created by paulk on 25/09/15.
  */
-public class FavouritesFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private MediaReleaseAdapter mediaReleaseAdapter;
     private RecyclerView recList;
     private ArrayList mediaReleaseList;
     private SwipeRefreshLayout swipeLayout;
+    private JsonMediaReleaseRequestHelper helper;
+    private boolean first = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setupMediaReleaseList();
+        return inflater.inflate(R.layout.recycle, container, false);
+    }
+
+    private void setupMediaReleaseList() {
         mediaReleaseList = new ArrayList(1);
         DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
         SQLiteDatabase dbReadableDatabase = db.getReadableDatabase();
         Cursor cursor = dbReadableDatabase.rawQuery("SELECT * FROM " + DatabaseHelper.MR_TABLE_NAME + " ORDER BY " + DatabaseHelper.ID_COLUMN + " DESC", null);
         while (cursor.moveToNext()) {
             byte[] object = cursor.getBlob(cursor.getColumnIndex(DatabaseHelper.OBJECT_COLUMN));
-            MediaRelease mr = (MediaRelease)DatabaseHelper.deserializeObject(object);
-            if(mr != null && mr.isFavourited()) {
+            MediaRelease mr = (MediaRelease) DatabaseHelper.deserializeObject(object);
+            if (mr != null && !mr.isHidden()) {
                 mediaReleaseList.add(mr);
             }
         }
-
-
-
-        return inflater.inflate(R.layout.recycle, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setupAdapter();
+        manualRefresh();
+    }
+
+    private void setupAdapter() {
         recList = (RecyclerView) getActivity().findViewById(R.id.cardList);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -60,7 +69,6 @@ public class FavouritesFragment extends Fragment {
 
         mediaReleaseAdapter = new MediaReleaseAdapter(mediaReleaseList, getActivity().getApplicationContext());
         recList.setAdapter(mediaReleaseAdapter);
-
 
         ItemTouchHelper.SimpleCallback swipeCallBack = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -89,7 +97,7 @@ public class FavouritesFragment extends Fragment {
                     mediaReleaseList.remove(position);
                     recList.getAdapter().notifyItemRemoved(position);
                     recList.getAdapter().notifyDataSetChanged();
-                } catch(SQLiteConstraintException sqlce) {
+                } catch (SQLiteConstraintException sqlce) {
                     //Do nothing, already in there
                 } finally {
                     dbWrite.endTransaction();
@@ -106,16 +114,43 @@ public class FavouritesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         swipeLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeLayout.setRefreshing(false);
-            }
-        });
+        swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
     }
 
+    public void manualRefresh() {
+        if(first) {
+            onRefresh();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        final boolean refreshing = true;
+        //Need this workaround because onLoad doesnt trigger the UI loading widget without it
+        swipeLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(refreshing);
+            }
+        });
+        helper = new JsonMediaReleaseRequestHelper(getActivity().getApplicationContext());
+        helper.setFragment(this);
+        helper.execute(Constants.BASE_URL + "/api/mediareleases");
+        first = false;
+    }
+
+    public void refreshContent() {
+        setupMediaReleaseList();
+        setupAdapter();
+        recList.getAdapter().notifyDataSetChanged();
+        swipeLayout.setRefreshing(false);
+    }
+
+    public void setFirst(boolean first) {
+        this.first = first;
+    }
 }

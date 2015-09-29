@@ -22,7 +22,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "au.gov.australia.media.mrs_android.mediareleaseservice"
+        applicationId "kilpatrick.paul.mediareleaseservice"
         minSdkVersion 22
         targetSdkVersion 22
         versionCode 1
