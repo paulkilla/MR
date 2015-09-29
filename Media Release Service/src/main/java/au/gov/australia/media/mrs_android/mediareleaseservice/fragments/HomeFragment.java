@@ -122,7 +122,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        swipeLayout.setRefreshing(true);
+        final boolean refreshing = true;
+        //Need this workaround because onLoad doesnt trigger the UI loading widget without it
+        swipeLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(refreshing);
+            }
+        });
         helper = new JsonMediaReleaseRequestHelper(getActivity().getApplicationContext());
         helper.setFragment(this);
         helper.execute(Constants.BASE_URL + "/api/mediareleases");
