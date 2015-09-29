@@ -70,7 +70,11 @@ public class MainActivity extends AppCompatActivity {
                 transaction.replace(R.id.content_frame, fragment).setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out).commit();
 
                 mDrawerList.setItemChecked(position, true);
-                setTitle(mNavDrawerItems[position]);
+                String theTitle = mNavDrawerItems[position];
+                if(theTitle.equals("Home")) {
+                    theTitle = getString(R.string.app_name);
+                }
+                getSupportActionBar().setTitle(theTitle);
                 mDrawerLayout.closeDrawer(mDrawerList);
             }
         });
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(R.string.app_name);
+                //getSupportActionBar().setTitle(R.string.app_name);
                 invalidateOptionsMenu();
             }
 
