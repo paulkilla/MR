@@ -20,8 +20,6 @@
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_home</item>
         <item>@string/nav_item_favs</item>
-        <item>@string/nav_item_subscriptions</item>
-        <item>@string/nav_item_search</item>
     </string-array>
 
     <string name="title_messages">Messages</string>
