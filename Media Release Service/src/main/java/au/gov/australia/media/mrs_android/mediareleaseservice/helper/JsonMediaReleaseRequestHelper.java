@@ -1,5 +1,6 @@
 package au.gov.australia.media.mrs_android.mediareleaseservice.helper;
 
+import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteConstraintException;
@@ -7,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.Toast;
 import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
+import au.gov.australia.media.mrs_android.mediareleaseservice.fragments.HomeFragment;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -27,6 +29,7 @@ import java.util.Date;
 public class JsonMediaReleaseRequestHelper extends AsyncTask<String, Void, String> {
 
     Context context;
+    Fragment fragment;
 
     public JsonMediaReleaseRequestHelper(Context context) {
         this.context = context;
@@ -47,6 +50,9 @@ public class JsonMediaReleaseRequestHelper extends AsyncTask<String, Void, Strin
     protected void onPostExecute(String json) {
         Toast toast = Toast.makeText(context, "Finished updating Media Releases", Toast.LENGTH_SHORT);
         toast.show();
+        if(fragment != null) {
+            ((HomeFragment)fragment).refreshContent();
+        }
     }
 
 
@@ -77,14 +83,16 @@ public class JsonMediaReleaseRequestHelper extends AsyncTask<String, Void, Strin
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(DatabaseHelper.ID_COLUMN, mediaRelease.getId());
                 contentValues.put(DatabaseHelper.OBJECT_COLUMN, DatabaseHelper.serializeObject(mediaRelease));
-                try {
-                    dbWrite.beginTransaction();
-                    dbWrite.insertOrThrow(DatabaseHelper.MR_TABLE_NAME, null, contentValues);
-                    dbWrite.setTransactionSuccessful();
-                } catch(SQLiteConstraintException sqlce) {
-                    //Do nothing, already in there
-                } finally {
-                    dbWrite.endTransaction();
+                if(dbWrite.rawQuery("SELECT " + DatabaseHelper.ID_COLUMN + " FROM " + DatabaseHelper.MR_TABLE_NAME + " WHERE ID = " + mediaRelease.getId(), null).getCount() <= 0) {
+                    try {
+                        dbWrite.beginTransaction();
+                        dbWrite.insertOrThrow(DatabaseHelper.MR_TABLE_NAME, null, contentValues);
+                        dbWrite.setTransactionSuccessful();
+                    } catch (SQLiteConstraintException sqlce) {
+                        //Do nothing, already in there
+                    } finally {
+                        dbWrite.endTransaction();
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -106,5 +114,9 @@ public class JsonMediaReleaseRequestHelper extends AsyncTask<String, Void, Strin
         inputStream.close();
         return result;
 
+    }
+
+    public void setFragment(Fragment fragment) {
+        this.fragment = fragment;
     }
 }

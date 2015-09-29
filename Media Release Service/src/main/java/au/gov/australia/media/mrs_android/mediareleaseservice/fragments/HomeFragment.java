@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +13,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import au.gov.australia.media.mrs_android.mediareleaseservice.Constants;
 import au.gov.australia.media.mrs_android.mediareleaseservice.R;
 import au.gov.australia.media.mrs_android.mediareleaseservice.adapter.MediaReleaseAdapter;
 import au.gov.australia.media.mrs_android.mediareleaseservice.domain.MediaRelease;
 import au.gov.australia.media.mrs_android.mediareleaseservice.helper.DatabaseHelper;
+import au.gov.australia.media.mrs_android.mediareleaseservice.helper.JsonMediaReleaseRequestHelper;
 
 import java.util.ArrayList;
 
@@ -30,27 +31,36 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private RecyclerView recList;
     private ArrayList mediaReleaseList;
     private SwipeRefreshLayout swipeLayout;
+    private JsonMediaReleaseRequestHelper helper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setupMediaReleaseList();
+        return inflater.inflate(R.layout.recycle, container, false);
+    }
+
+    private void setupMediaReleaseList() {
         mediaReleaseList = new ArrayList(1);
         DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
         SQLiteDatabase dbReadableDatabase = db.getReadableDatabase();
-        Cursor cursor = dbReadableDatabase.rawQuery("SELECT * FROM " + DatabaseHelper.MR_TABLE_NAME, null);
+        Cursor cursor = dbReadableDatabase.rawQuery("SELECT * FROM " + DatabaseHelper.MR_TABLE_NAME + " ORDER BY " + DatabaseHelper.ID_COLUMN + " DESC", null);
         while (cursor.moveToNext()) {
             byte[] object = cursor.getBlob(cursor.getColumnIndex(DatabaseHelper.OBJECT_COLUMN));
-            MediaRelease mr = (MediaRelease)DatabaseHelper.deserializeObject(object);
-            if(mr != null && !mr.isHidden()) {
+            MediaRelease mr = (MediaRelease) DatabaseHelper.deserializeObject(object);
+            if (mr != null && !mr.isHidden()) {
                 mediaReleaseList.add(mr);
             }
         }
-
-        return inflater.inflate(R.layout.recycle, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setupAdapter();
+        onRefresh();
+    }
+
+    private void setupAdapter() {
         recList = (RecyclerView) getActivity().findViewById(R.id.cardList);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -86,7 +96,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     mediaReleaseList.remove(position);
                     recList.getAdapter().notifyItemRemoved(position);
                     recList.getAdapter().notifyDataSetChanged();
-                } catch(SQLiteConstraintException sqlce) {
+                } catch (SQLiteConstraintException sqlce) {
                     //Do nothing, already in there
                 } finally {
                     dbWrite.endTransaction();
@@ -112,11 +122,17 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
-                recList.getAdapter().notifyDataSetChanged();
-                swipeLayout.setRefreshing(false);
-            }
-        }, 5000);
+        swipeLayout.setRefreshing(true);
+        helper = new JsonMediaReleaseRequestHelper(getActivity().getApplicationContext());
+        helper.setFragment(this);
+        helper.execute(Constants.BASE_URL + "/api/mediareleases");
     }
+
+    public void refreshContent() {
+        setupMediaReleaseList();
+        setupAdapter();
+        recList.getAdapter().notifyDataSetChanged();
+        swipeLayout.setRefreshing(false);
+    }
+
 }

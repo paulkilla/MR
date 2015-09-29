@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -28,13 +29,14 @@ public class FavouritesFragment extends Fragment {
     private MediaReleaseAdapter mediaReleaseAdapter;
     private RecyclerView recList;
     private ArrayList mediaReleaseList;
+    private SwipeRefreshLayout swipeLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mediaReleaseList = new ArrayList(1);
         DatabaseHelper db = new DatabaseHelper(getActivity().getApplicationContext());
         SQLiteDatabase dbReadableDatabase = db.getReadableDatabase();
-        Cursor cursor = dbReadableDatabase.rawQuery("SELECT * FROM " + DatabaseHelper.MR_TABLE_NAME, null);
+        Cursor cursor = dbReadableDatabase.rawQuery("SELECT * FROM " + DatabaseHelper.MR_TABLE_NAME + " ORDER BY " + DatabaseHelper.ID_COLUMN + " DESC", null);
         while (cursor.moveToNext()) {
             byte[] object = cursor.getBlob(cursor.getColumnIndex(DatabaseHelper.OBJECT_COLUMN));
             MediaRelease mr = (MediaRelease)DatabaseHelper.deserializeObject(object);
@@ -97,6 +99,23 @@ public class FavouritesFragment extends Fragment {
 
         ItemTouchHelper swipeLeftHelper = new ItemTouchHelper(swipeCallBack);
         swipeLeftHelper.attachToRecyclerView(recList);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        swipeLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeLayout.setRefreshing(false);
+            }
+        });
+        swipeLayout.setColorScheme(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
 }
