@@ -32,6 +32,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private ArrayList mediaReleaseList;
     private SwipeRefreshLayout swipeLayout;
     private JsonMediaReleaseRequestHelper helper;
+    private boolean first = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setupAdapter();
-        onRefresh();
+        manualRefresh();
     }
 
     private void setupAdapter() {
@@ -120,6 +121,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 android.R.color.holo_red_light);
     }
 
+    public void manualRefresh() {
+        if(first) {
+            onRefresh();
+        }
+    }
+
     @Override
     public void onRefresh() {
         final boolean refreshing = true;
@@ -133,6 +140,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         helper = new JsonMediaReleaseRequestHelper(getActivity().getApplicationContext());
         helper.setFragment(this);
         helper.execute(Constants.BASE_URL + "/api/mediareleases");
+        first = false;
     }
 
     public void refreshContent() {
@@ -142,4 +150,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeLayout.setRefreshing(false);
     }
 
+    public void setFirst(boolean first) {
+        this.first = first;
+    }
 }
