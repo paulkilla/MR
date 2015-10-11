@@ -5,5 +5,5 @@ package kilpatrick.paul.mediareleaseservice;
  */
 public class Constants {
 
-    public static final String BASE_URL = "https://test.media.australia.gov.au";
+    public static final String BASE_URL = "https://media.australia.gov.au";
 }
