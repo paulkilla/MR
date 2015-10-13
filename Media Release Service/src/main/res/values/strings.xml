@@ -26,4 +26,5 @@
     <string name="title_messages">Messages</string>
     <string name="title_friends">Friends</string>
     <string name="title_home">Home</string>
+    <string name="app_name_label">Media Releases</string>
 </resources>
